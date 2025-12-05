@@ -1,0 +1,43 @@
+{
+  "name": "ingres-ai-backend",
+  "version": "1.0.0",
+  "description": "This is the backend server for the INGRES AI Virtual Assistant, built with Node.js, Express, and MongoDB.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "mern",
+    "virtual-assistant"
+  ],
+  "author": "INGRES AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@huggingface/inference": "^4.13.4",
+    "bcryptjs": "^2.4.3",
+    "cohere-ai": "^7.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "huggingface": "^1.4.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^7.8.8",
+    "morgan": "^1.10.0",
+    "openai": "^6.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
