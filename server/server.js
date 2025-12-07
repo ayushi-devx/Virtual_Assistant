@@ -11,6 +11,10 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const userRoutes = require('./routes/userRoutes');
+const flashcardRoutes = require('./routes/flashcardRoutes');
+const blogRoutes = require('./routes/blogRoutes');
+const savedAnswerRoutes = require('./routes/savedAnswerRoutes');
+const searchRoutes = require('./routes/searchRoutes');
 
 // Initialize express
 const app = express();
@@ -29,6 +33,10 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/blogs', blogRoutes);
+app.use('/api/saved-answers', savedAnswerRoutes);
+app.use('/api/search', searchRoutes);
 
 // Error handling middleware
 app.use(notFound);

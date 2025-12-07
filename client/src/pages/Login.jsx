@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -32,7 +33,9 @@ export default function Login() {
     const result = await login(formData);
 
     if (result.success) {
-      navigate('/chat');
+      const userData = result.data;
+      const redirectPath = userData?.isAdmin ? '/dashboard' : '/chat';
+      navigate(redirectPath, { replace: true });
     } else {
       setError(result.error);
     }

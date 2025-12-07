@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../../context/ChatContext';
 import { useTheme } from '../../context/ThemeContext';
 import MessageBubble from './MessageBubble';
 import AIProviderSelector from './AIProviderSelector';
+import VoiceInput from './VoiceInput';
+import TextToSpeech from './TextToSpeech';
 
 export default function ChatBox() {
   const { currentChat, sendMessage, isLoading, switchPersonality, switchAIProvider, currentPersonality } = useChat();
@@ -35,6 +38,10 @@ export default function ChatBox() {
 
   const handleProviderChange = async (provider) => {
     await switchAIProvider(provider);
+  };
+
+  const handleVoiceInput = (text) => {
+    setInputValue(text);
   };
 
   const getPersonalityColor = (personality) => {
@@ -119,9 +126,19 @@ export default function ChatBox() {
 
       <div className={`flex-1 overflow-y-auto p-6 space-y-4`}>
         <AnimatePresence>
-          {currentChat?.messages?.map((message, index) => (
-            <MessageBubble key={index} message={message} personality={currentPersonality} />
-          ))}
+          {currentChat?.messages?.map((message, index) => {
+            const prevMessage = index > 0 ? currentChat.messages[index - 1] : null;
+            const userMessage = message.sender === 'user' ? message.text : prevMessage?.text;
+            return (
+              <MessageBubble 
+                key={index} 
+                message={message} 
+                personality={currentPersonality}
+                userMessage={userMessage}
+                chatId={currentChat._id}
+              />
+            );
+          })}
         </AnimatePresence>
 
         {isLoading && (
@@ -166,6 +183,8 @@ export default function ChatBox() {
         }`}
       >
         <div className="flex gap-3">
+          <VoiceInput onVoiceInput={handleVoiceInput} theme={theme} />
+          
           <input
             type="text"
             value={inputValue}

@@ -36,6 +36,7 @@ export const authAPI = {
   updateProfile: (data) => api.put('/auth/profile', data),
   toggleTheme: () => api.put('/auth/theme'),
   deleteAccount: () => api.delete('/auth/profile'),
+  getStats: () => api.get('/auth/stats'),
 };
 
 export const chatAPI = {
@@ -49,6 +50,44 @@ export const chatAPI = {
   updateAIProvider: (chatId, aiProvider) => api.put(`/chat/${chatId}/provider`, { aiProvider }),
   getAIProviders: () => api.get('/chat/providers/list'),
   archiveChat: (chatId) => api.put(`/chat/${chatId}/archive`),
+};
+
+export const flashcardAPI = {
+  createDeck: (data) => api.post('/flashcards', data),
+  getUserDecks: (page = 1, limit = 10) => api.get(`/flashcards?page=${page}&limit=${limit}`),
+  getDeckById: (id) => api.get(`/flashcards/${id}`),
+  getPublicDecks: (page = 1, limit = 10, category = '') => api.get(`/flashcards/public/browse?page=${page}&limit=${limit}&category=${category}`),
+  addFlashcard: (deckId, data) => api.post(`/flashcards/${deckId}/card`, data),
+  updateFlashcard: (deckId, cardId, data) => api.put(`/flashcards/${deckId}/card/${cardId}`, data),
+  deleteFlashcard: (deckId, cardId) => api.delete(`/flashcards/${deckId}/card/${cardId}`),
+  updateDeck: (deckId, data) => api.put(`/flashcards/${deckId}`, data),
+  deleteDeck: (deckId) => api.delete(`/flashcards/${deckId}`),
+};
+
+export const blogAPI = {
+  createBlog: (data) => api.post('/blogs', data),
+  getBlogs: (page = 1, limit = 10, category = '', search = '') => api.get(`/blogs?page=${page}&limit=${limit}&category=${category}&search=${search}`),
+  getBlogById: (id) => api.get(`/blogs/${id}`),
+  updateBlog: (id, data) => api.put(`/blogs/${id}`, data),
+  deleteBlog: (id) => api.delete(`/blogs/${id}`),
+  getAdminBlogs: (page = 1, limit = 10) => api.get(`/blogs/admin/all?page=${page}&limit=${limit}`),
+  getCategories: () => api.get('/blogs/categories'),
+};
+
+export const savedAnswerAPI = {
+  saveBotResponse: (data) => api.post('/saved-answers', data),
+  getSavedAnswers: (page = 1, limit = 10, category = '') => api.get(`/saved-answers?page=${page}&limit=${limit}&category=${category}`),
+  getSavedAnswerById: (id) => api.get(`/saved-answers/${id}`),
+  updateSavedAnswer: (id, data) => api.put(`/saved-answers/${id}`, data),
+  deleteSavedAnswer: (id) => api.delete(`/saved-answers/${id}`),
+  getCategories: () => api.get('/saved-answers/categories'),
+};
+
+export const searchAPI = {
+  globalSearch: (query, type = '') => api.get(`/search?query=${query}&type=${type}`),
+  searchChats: (query) => api.get(`/search/chats?query=${query}`),
+  searchBlogs: (query) => api.get(`/search/blogs?query=${query}`),
+  searchFlashcards: (query) => api.get(`/search/flashcards?query=${query}`),
 };
 
 export default api;

@@ -108,7 +108,7 @@ export const ChatProvider = ({ children }) => {
 
     try {
       setIsLoading(true);
-      const updated = await chatAPI.updateChatPersonality(currentChat._id, personality);
+      await chatAPI.updateChatPersonality(currentChat._id, personality);
       setCurrentPersonality(personality);
       setCurrentChat((prev) => ({
         ...prev,
@@ -128,7 +128,7 @@ export const ChatProvider = ({ children }) => {
 
     try {
       setIsLoading(true);
-      const { data } = await chatAPI.updateAIProvider(currentChat._id, aiProvider);
+      await chatAPI.updateAIProvider(currentChat._id, aiProvider);
       setCurrentChat((prev) => ({
         ...prev,
         aiProvider,
@@ -192,6 +192,7 @@ export const ChatProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useChat = () => {
   const context = useContext(ChatContext);
   if (!context) {

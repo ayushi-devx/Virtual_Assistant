@@ -40,22 +40,20 @@ const userSchema = mongoose.Schema(
   }
 );
 
-// Encrypt password using bcrypt
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
-    next();
+    return next();
   }
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
-// Match user entered password to hashed password in database
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Generate JWT token
 userSchema.methods.generateAuthToken = function () {
   return jwt.sign(
     { id: this._id, isAdmin: this.isAdmin },

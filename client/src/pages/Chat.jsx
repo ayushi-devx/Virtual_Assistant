@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../context/ChatContext';
 import { useTheme } from '../context/ThemeContext';
@@ -7,26 +8,21 @@ import ChatBox from '../components/chat/ChatBox';
 import PersonalitySelector from '../components/chat/PersonalitySelector';
 
 export default function Chat() {
-  const { currentChat, loadChats, createNewChat, currentPersonality, switchPersonality } = useChat();
+  const { currentChat, loadChats, createNewChat } = useChat();
   const { theme } = useTheme();
-  const [showPersonalitySelector, setShowPersonalitySelector] = useState(!currentChat);
-  const sidebarRef = useRef(null);
+  const showPersonalitySelector = !currentChat;
+  const hasLoadedChats = useRef(false);
 
   useEffect(() => {
-    loadChats();
-  }, []);
-
-  useEffect(() => {
-    if (!currentChat) {
-      setShowPersonalitySelector(true);
-    } else {
-      setShowPersonalitySelector(false);
+    if (!hasLoadedChats.current) {
+      hasLoadedChats.current = true;
+      loadChats();
     }
-  }, [currentChat]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreateChat = async (personality) => {
     await createNewChat(personality);
-    setShowPersonalitySelector(false);
   };
 
   return (

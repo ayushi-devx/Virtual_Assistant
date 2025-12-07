@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 const { validationResult } = require('express-validator');
+const { FlashcardDeck } = require('../models/flashcardModel');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -50,15 +51,14 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(400);
-    throw new Error(errors.array()[0].msg);
-  }
-
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  if (!email || !password) {
+    res.status(400);
+    throw new Error('Please provide email and password');
+  }
+
+  const user = await User.findOne({ email }).select('+password');
 
   if (user && (await user.matchPassword(password))) {
     res.json({
@@ -160,6 +160,27 @@ const toggleTheme = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get platform statistics
+// @route   GET /api/auth/stats
+// @access  Public
+const getStats = asyncHandler(async (req, res) => {
+  const totalUsers = await User.countDocuments();
+  
+  const totalFlashcards = await FlashcardDeck.aggregate([
+    {
+      $group: {
+        _id: null,
+        count: { $sum: { $size: '$flashcards' } }
+      }
+    }
+  ]);
+
+  res.json({
+    totalUsers,
+    totalFlashcards: totalFlashcards[0]?.count || 0,
+  });
+});
+
 module.exports = {
   registerUser,
   authUser,
@@ -167,4 +188,5 @@ module.exports = {
   updateUserProfile,
   deleteUserAccount,
   toggleTheme,
+  getStats,
 };

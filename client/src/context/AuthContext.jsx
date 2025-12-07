@@ -7,13 +7,25 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
     
     if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } catch (e) {
+        console.error('Failed to parse stored user:', e);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+      }
+    } else {
+      setIsAuthenticated(false);
     }
     setIsLoading(false);
   }, []);
@@ -27,11 +39,13 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data));
       setUser(data);
+      setIsAuthenticated(true);
       
       return { success: true, data };
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed';
       setError(message);
+      setIsAuthenticated(false);
       return { success: false, error: message };
     } finally {
       setIsLoading(false);
@@ -49,6 +63,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data));
         setUser(data);
+        setIsAuthenticated(true);
         return { success: true, data };
       } else {
         throw new Error('Invalid response from server');
@@ -57,6 +72,9 @@ export const AuthProvider = ({ children }) => {
       console.error('Login error:', err);
       const message = err.response?.data?.message || err.message || 'Login failed';
       setError(message);
+      setIsAuthenticated(false);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       return { success: false, error: message };
     } finally {
       setIsLoading(false);
@@ -67,6 +85,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setIsAuthenticated(false);
   };
 
   const updateProfile = async (data) => {
@@ -75,6 +94,7 @@ export const AuthProvider = ({ children }) => {
       
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
+      setIsAuthenticated(true);
       
       return { success: true, data: updatedUser };
     } catch (err) {
@@ -93,8 +113,6 @@ export const AuthProvider = ({ children }) => {
       return { success: false, error: message };
     }
   };
-
-  const isAuthenticated = !!user && !!localStorage.getItem('token');
 
   return (
     <AuthContext.Provider

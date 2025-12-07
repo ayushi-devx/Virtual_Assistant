@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import SearchBar from '../chat/SearchBar';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
@@ -16,8 +19,27 @@ export default function Navbar() {
   };
 
   const handleLogoClick = () => {
-    logout();
     navigate('/');
+    window.location.reload();
+  };
+
+  const handleSearchResult = ({ result, type }) => {
+    switch (type) {
+      case 'chat':
+        navigate(`/chat/${result._id}`);
+        break;
+      case 'blog':
+        navigate(`/blogs`);
+        break;
+      case 'flashcard':
+        navigate(`/flashcards`);
+        break;
+      case 'savedAnswer':
+        navigate(`/saved-answers`);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -43,6 +65,84 @@ export default function Navbar() {
 
           {user && (
             <div className="flex items-center gap-4">
+              <div className="hidden md:block">
+                <SearchBar onSelectResult={handleSearchResult} />
+              </div>
+
+              <div className="flex gap-2 items-center">
+                <Link to="/chat" title="Chat">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      location.pathname === '/chat'
+                        ? theme === 'dark'
+                          ? 'bg-blue-600'
+                          : 'bg-blue-100'
+                        : theme === 'dark'
+                        ? 'bg-slate-700 hover:bg-slate-600'
+                        : 'bg-slate-100 hover:bg-slate-200'
+                    }`}
+                  >
+                    💬
+                  </motion.button>
+                </Link>
+
+                <Link to="/flashcards" title="Flashcards">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      location.pathname === '/flashcards'
+                        ? theme === 'dark'
+                          ? 'bg-blue-600'
+                          : 'bg-blue-100'
+                        : theme === 'dark'
+                        ? 'bg-slate-700 hover:bg-slate-600'
+                        : 'bg-slate-100 hover:bg-slate-200'
+                    }`}
+                  >
+                    📚
+                  </motion.button>
+                </Link>
+
+                <Link to="/blogs" title="Blogs">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      location.pathname === '/blogs'
+                        ? theme === 'dark'
+                          ? 'bg-blue-600'
+                          : 'bg-blue-100'
+                        : theme === 'dark'
+                        ? 'bg-slate-700 hover:bg-slate-600'
+                        : 'bg-slate-100 hover:bg-slate-200'
+                    }`}
+                  >
+                    📖
+                  </motion.button>
+                </Link>
+
+                <Link to="/saved-answers" title="Saved Answers">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      location.pathname === '/saved-answers'
+                        ? theme === 'dark'
+                          ? 'bg-blue-600'
+                          : 'bg-blue-100'
+                        : theme === 'dark'
+                        ? 'bg-slate-700 hover:bg-slate-600'
+                        : 'bg-slate-100 hover:bg-slate-200'
+                    }`}
+                  >
+                    ⭐
+                  </motion.button>
+                </Link>
+              </div>
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -70,7 +170,10 @@ export default function Navbar() {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
                     {user.name?.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium">{user.name}</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{user.name}</span>
+                    {user.isAdmin && <span className="text-xs text-purple-500">⭐ Admin</span>}
+                  </div>
                 </motion.button>
 
                 {showDropdown && (
@@ -94,6 +197,18 @@ export default function Navbar() {
                     >
                       Profile
                     </Link>
+                    {user.isAdmin && (
+                      <Link
+                        to="/dashboard"
+                        className={`block px-4 py-2 hover:bg-opacity-20 transition-colors text-purple-500 ${
+                          theme === 'dark'
+                            ? 'hover:bg-white'
+                            : 'hover:bg-black'
+                        }`}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
                     <button
                       onClick={handleLogout}
                       className={`w-full text-left px-4 py-2 hover:bg-opacity-20 transition-colors text-red-500 ${

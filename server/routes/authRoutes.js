@@ -8,6 +8,7 @@ const {
   updateUserProfile,
   deleteUserAccount,
   toggleTheme,
+  getStats,
 } = require('../controllers/authController');
 
 const router = express.Router();
@@ -28,14 +29,12 @@ router.post(
 // @route   POST /api/auth/login
 // @desc    Auth user & get token
 // @access  Public
-router.post(
-  '/login',
-  [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
-  ],
-  authUser
-);
+router.post('/login', authUser);
+
+// @route   GET /api/auth/stats
+// @desc    Get platform statistics
+// @access  Public
+router.get('/stats', getStats);
 
 // Protected routes (require authentication)
 router.use(protect);

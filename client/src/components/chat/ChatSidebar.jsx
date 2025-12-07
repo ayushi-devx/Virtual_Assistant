@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../../context/ChatContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function ChatSidebar() {
-  const { chats, currentChat, loadChatById, createNewChat, archiveChat } = useChat();
+  const { chats, currentChat, loadChatById } = useChat();
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
   const navigate = useNavigate();
